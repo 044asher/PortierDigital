@@ -3,11 +3,25 @@ stages:
   - test
   - deploy
 
+services:
+  - mysql:latest
+
+variables:
+  MYSQL_ROOT_PASSWORD: root
+  MYSQL_DATABASE: portier_digital
+  MYSQL_USER: slj_kinocms
+  MYSQL_PASSWORD: UC7w3mEt57
+
+before_script:
+  - apt-get update && apt-get install -y netcat
+  - while ! nc -z mysql 3306; do sleep 1; done
+  - mvn clean
+
 build:
   stage: build
   image: maven:3.9.4-eclipse-temurin-17
   script:
-    - mvn clean compile
+    - mvn compile
   artifacts:
     paths:
       - target/
