@@ -1,0 +1,117 @@
+<!-- HTML Get in touch -->
+<div class="modal fade" id="getInTouchModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h5 class="modal-title text-center">Get In Touch</h5>
+            </div>
+            <div class="modal-body">
+                <form id="getInTouchForm">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required minlength="2"
+                               maxlength="30">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveGetInTouchBtn">Send</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h5 class="modal-title">Thank You!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Your message has been sent. We will get in touch with you soon.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function validateForm() {
+        let isValid = true;
+        const name = $("#name").val().trim();
+        const email = $("#email").val().trim();
+
+        $(".error-message").remove();
+
+        if (name === "") {
+            $("#name").after('<div class="error-message" style="color: red;">Name cannot be empty</div>');
+            isValid = false;
+        } else if (name.length < 2 || name.length > 30) {
+            $("#name").after('<div class="error-message" style="color: red;">Enter your current name! (Between 2 and 30 symbols)</div>');
+            isValid = false;
+        }
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (email === "") {
+            $("#email").after('<div class="error-message" style="color: red;">Email cannot be empty</div>');
+            isValid = false;
+        } else if (!emailPattern.test(email)) {
+            $("#email").after('<div class="error-message" style="color: red;">Enter a valid email address</div>');
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    function saveGetInTouch() {
+        if (!validateForm()) {
+            console.log("Validation failed");
+            return;
+        }
+
+        const formData = {
+            name: $("#name").val(),
+            email: $("#email").val()
+        };
+
+        $.ajax({
+            url: "/admin/get-in-touch/save",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(formData),
+            success: function () {
+                console.log("Form successfully submitted");
+                $("#getInTouchModal").modal("hide");
+                $("#getInTouchForm")[0].reset();
+
+                $("#successModal").modal("show");
+            },
+            error: function (xhr) {
+                console.log("Failed to save data: " + xhr.responseText);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+
+        $(".touch").on("click", function () {
+            $("#getInTouchModal").modal("show");
+        });
+
+        $("#saveGetInTouchBtn").on("click", function () {
+            console.log("Save button clicked");
+            saveGetInTouch();
+        });
+
+    });
+</script>

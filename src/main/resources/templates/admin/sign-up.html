@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-bs-theme="light" data-bs-theme-color="theme-color-default">
+  <head>
+      <title>Portier Digital | Sign Up</title>
+      <th:block th:insert="~{components/adm/head.html}"></th:block>
+  </head>
+  <body class=" " data-bs-spy="scroll" data-bs-target="#elements-section" data-bs-offset="0" tabindex="0">
+    <!-- loader Start -->
+    <div id="loading">
+      <div class="loader simple-loader">
+          <div class="loader-body">
+          </div>
+      </div>    </div>
+    <!-- loader END -->
+    
+      <div class="wrapper">
+      <section class="login-content">
+         <div class="row m-0 align-items-start bg-white h-100">
+               <div class="col-md-6 d-md-block d-none bg-primary p-0 mt-n1 vh-100 overflow-hidden">
+               <img src="/assets/images/auth/05.png" class="img-fluid gradient-main animated-scaleX" alt="images">
+            </div>
+            <div class="col-md-6">               
+               <div class="row justify-content-center">
+                  <div class="col-md-10 mt-5">
+                     <div class="card card-transparent auth-card shadow-none d-flex justify-content-center mb-0">
+                        <div class="card-body">
+                           <th:block class="mb-5" th:insert="~{components/adm/logo.html}"></th:block>
+                           <h2 class="mb-2 text-center mt-5">Sign Up</h2>
+                           <p class="text-center">Send your data for admin application</p>
+                           <form action="/registration" method="POST" th:object="${user}">
+                              <div class="row">
+                                 <div class="col-lg-6">
+                                    <div class="form-group">
+                                       <label for="username" class="form-label">Username</label>
+                                       <input type="text" class="form-control" id="username" th:field="*{username}" placeholder=" ">
+                                       <div th:if="${#fields.hasErrors('username')}" th:errors="*{email}" class="text-danger"></div>
+                                    </div>
+                                 </div>
+                                 <div class="col-lg-6">
+                                    <div class="form-group">
+                                       <label for="email" class="form-label">Email</label>
+                                       <input type="email" class="form-control" id="email" th:field="*{email}" placeholder=" ">
+                                        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger"></div>
+                                    </div>
+                                 </div>
+                                 <div class="">
+                                    <div class="form-group">
+                                       <label for="password" class="form-label">Password</label>
+                                       <input type="password" class="form-control" id="password" th:field="*{password}" placeholder=" ">
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="d-flex justify-content-center">
+                                 <button type="submit" class="btn btn-outline-primary" style="width: 700px;">Send data <br>for verification</button>
+                              </div>
+                           </form>
+                            <p class="mt-3 text-center mt-4">
+                                Already have approved Account? <a th:href="@{/sign-in}" class="text-underline">Sign In</a>
+                            </p>
+                        </div>
+                     </div>    
+                  </div>
+               </div>
+
+                <!-- Модальное окно -->
+                <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+<!--                                <h5 class="modal-title" id="successModalLabel">Success</h5>-->
+                            </div>
+                            <div class="modal-body">
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="sign-bg sign-bg-right">
+                  <svg width="280" height="230" viewBox="0 0 421 359" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <g opacity="0.05">
+                        <rect x="-15.0845" y="154.773" width="543" height="77.5714" rx="38.7857" transform="rotate(-45 -15.0845 154.773)" fill="#3A57E8"/>
+                        <rect x="149.47" y="319.328" width="543" height="77.5714" rx="38.7857" transform="rotate(-45 149.47 319.328)" fill="#3A57E8"/>
+                        <rect x="203.936" y="99.543" width="310.286" height="77.5714" rx="38.7857" transform="rotate(45 203.936 99.543)" fill="#3A57E8"/>
+                        <rect x="204.316" y="-229.172" width="543" height="77.5714" rx="38.7857" transform="rotate(45 204.316 -229.172)" fill="#3A57E8"/>
+                     </g>
+                  </svg>
+               </div>
+            </div>   
+         </div>
+      </section>
+      </div>
+
+    <th:block th:insert="~{components/adm/hopeUIScripts.html}"></th:block>
+
+    <script>
+        $(document).ready(function () {
+            let usernameTimer, emailTimer;
+
+            $("#username").on("input", function () {
+                clearTimeout(usernameTimer);
+                const username = $(this).val();
+
+                usernameTimer = setTimeout(function () {
+                    $.ajax({
+                        url: "/validate/username",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({ username: username }),
+                        success: function (response) {
+                            clearValidation("#username");
+                        },
+                        error: function (response) {
+                            showValidationError("#username", response.responseText);
+                        }
+                    });
+                }, 1000);
+            });
+
+            $("#email").on("input", function () {
+                clearTimeout(emailTimer);
+                const email = $(this).val();
+
+                emailTimer = setTimeout(function () {
+                    $.ajax({
+                        url: "/validate/email",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({ email: email }),
+                        success: function (response) {
+                            clearValidation("#email");
+                        },
+                        error: function (response) {
+                            showValidationError("#email", response.responseText);
+                        }
+                    });
+                }, 1000);
+            });
+
+
+            $("form").on("submit", function (event) {
+                event.preventDefault();
+
+                $.ajax({
+                    url: "/registration",
+                    type: "POST",
+                    contentType: "application/x-www-form-urlencoded",
+                    data: $(this).serialize(),
+                    success: function () {
+                        $('#successModal .modal-body').text("Thank you! Now you should wait for checking your admin application. You will receive the answer to your Email.");
+                        $('#successModal .modal-header').text("Success");
+                        $('#successModal').modal('show');
+                    },
+                    error: function (response) {
+                        $('#successModal .modal-body').text(response.responseText);
+                        $('#successModal .modal-header').text("Error");
+                        $('#successModal').modal('show');
+                    }
+                });
+            });
+
+
+            function showValidationError(inputSelector, message) {
+                const inputElement = $(inputSelector);
+                const errorDiv = inputElement.siblings(".invalid-feedback");
+
+                inputElement.addClass("is-invalid");
+                errorDiv.text(message).show();
+            }
+
+            function clearValidation(inputSelector) {
+                const inputElement = $(inputSelector);
+                const errorDiv = inputElement.siblings(".invalid-feedback");
+
+                inputElement.removeClass("is-invalid");
+                errorDiv.hide();
+            }
+        });
+    </script>
+
+  </body>
+</html>
