@@ -1,0 +1,37 @@
+stages:
+  - build
+  - test
+  - deploy
+
+# Step 1: Build stage
+build:
+  stage: build
+  image: maven:3.8.6-openjdk-17
+  script:
+    - mvn clean compile
+  artifacts:
+    paths:
+      - target/
+
+# Step 2: Test stage
+test:
+  stage: test
+  image: maven:3.8.6-openjdk-17
+  script:
+    - mvn test
+  artifacts:
+    when: always
+    paths:
+      - target/surefire-reports/
+    reports:
+      junit: target/surefire-reports/*.xml
+
+# Step 3: Deploy stage (optional example for a development environment)
+deploy:
+  stage: deploy
+  image: maven:3.8.6-openjdk-17
+  script:
+    - echo "Deploying application..."
+    # Add actual deployment commands here, e.g., upload files or run deployment scripts
+  only:
+    - main
